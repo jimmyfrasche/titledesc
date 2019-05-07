@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang=en>
+	<head>
+		<meta charset=utf-8>
+		<title>test of x-title, x-desc custom elements</title>
+		<script src=titledesc.mjs type=module></script>
+		<style>
+			/* these are just to make it easier to spot what's what at a glance. */
+			h1 {
+				margin-bottom: 0;
+			}
+			x-title {
+				font-weight: bolder;
+			}
+			x-desc {
+				font-style: italic;
+			}
+			[aria-labelledby] {
+				border: 10px dotted deeppink;
+			}
+			[aria-describedby] {
+				margin: 5px;
+				outline: 5px dashed cyan;
+			}
+		</style>
+	</head>
+	<body>
+		<p>Test page for <a href=https://github.com/jimmyfrasche/titledesc>titledesc</a>, a polyfill for <a href=https://github.com/whatwg/html/issues/4596>whatwg/html#4596</a></p>
+		<p>Legend:</p>
+		<ul>
+			<li><code>x-title</code> is rendered bold</li>
+			<li><code>x-desc</code> is rendered in italics</li>
+			<li>elements with an <code>aria-labelledby</code> attribute have a dotted deepink border</li>
+			<li>elements with an <code>aria-describedby</code> attribute have a dashed cyan outline</li>
+		</ul>
+		<h1>Ideal usage in a world with full browser support</h1>
+		<div>
+			<x-title>labelled div</x-title>
+			<x-desc>described div</x-desc>
+		</div>
+		<h1>Basic usage, with proper fallbacks for when JS doesn't load</h1>
+		<div aria-labelledby=manual-title-id aria-describedby=manual-desc-id>
+			<x-title id=manual-title-id>labelled div</x-title>
+			<x-desc id=manual-desc-id>described div</x-desc>
+		</div>
+		<h1>Multiple titles and descriptions</h1>
+		<div>
+			<x-title>label 1</x-title>
+			<x-title>label 2</x-title>
+			<x-title>label 3</x-title>
+			<x-title>label 4</x-title>
+			<x-desc>description 1</x-desc>
+			<x-desc>description 2</x-desc>
+			<x-desc>description 3</x-desc>
+			<x-desc>description 4</x-desc>
+		</div>
+		<h1>Mixed usage</h1>
+		<div aria-labelledby=mixed-label aria-describedby=mixed-desc>
+			<span id=mixed-label>non <code>x-title</code> label</span>
+			<x-title><code>x-title</code> label</x-title>
+			<span id=mixed-desc>non <code>x-desc</code> description</span>
+			<x-desc><code>x-desc</code> description</x-desc>
+		</div>
+		<h1>Using <code>hidden</code></h1>
+		<div>
+			<x-title hidden>secret title</x-title>
+			<x-desc hidden>secret desc</x-desc>
+			<p>title and description are hidden.</p>
+		</div>
+		<h1>Using <code>for</code> attribute to add description to form element</h1>
+		<div>
+			<input id=checkbox type=checkbox>
+			<label for=checkbox>checkbox label (not <code>x-title</code>)</label>
+			<x-desc for=checkbox>a description of this checkbox</x-desc>
+		</div>
+		<h1>Empty attributes</h1>
+		<div>
+			<x-title id>empty <code>id</code> attribute</x-title>
+			<x-desc for>empty <code>for</code> attribute</x-desc>
+		</div>
+		<h1>Incorrect <code>for</code> attribute</h1>
+		<div>
+			<x-title for=does-not-exist>no such <code>id</code></x-title>
+			<x-desc id=self for=self><code>id</code> is same as <code>for</code></x-desc>
+		</div>
+		<h1>Title removed by javascript</h1>
+		<div>
+			<x-title id=remove>all is impermanent</x-title>
+			<p><code>x-title</code> element was removed.</code>
+		</div>
+		<script>
+			document.getElementById("remove").remove();
+		</script>
+		<h1>Title added by javascript</h1>
+		<div id=addto>
+		</div>
+		<script>
+			const con = document.getElementById("addto");
+			const title = document.createElement("x-title");
+			title.innerHTML = "Added title";
+			con.appendChild(title);
+		</script>
+		<h1>Title reparented by javascript</h1>
+		<div>
+			<div id=con1>
+				<x-title>label</x-title>
+				<p>originally titled container</p>
+			</div>
+			<div id=con2>
+			</div>
+			<script>
+				document.getElementById("con2").appendChild(document.querySelector("#con1 x-title"));
+			</script>
+		</div>
+	</body>
+</html>
